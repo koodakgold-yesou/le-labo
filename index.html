@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Labo de français</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Tinos:ital,wght@0,400;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-size:15px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 24px 6px}
+.top h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.top p{margin:0;color:var(--muted);font-size:14px}
+.wrap{display:grid;grid-template-columns:340px minmax(0,1fr);gap:20px;padding:14px 24px 40px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;padding:12px 16px 32px}.top{padding:16px 16px 4px}}
+
+/* Builder */
+.builder{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:18px;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto}
+@media (max-width:900px){.builder{position:static;max-height:none}}
+.field{display:flex;flex-direction:column;gap:8px}
+.field > .label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.label .mini{display:flex;gap:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;cursor:pointer}
+.text{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:13.5px;cursor:pointer;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tyrow{display:flex;flex-direction:column;gap:6px}
+.tyrow + .tyrow{margin-top:8px}
+.tylab{font-size:12px;color:var(--muted)}
+#types{display:block}
+.seg{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:14px}
+.seg label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+.seg input{accent-color:var(--accent)}
+.seglab{color:var(--muted);font-size:13px}
+.topics{display:flex;flex-direction:column;gap:12px}
+.tgroup h4{margin:0 0 4px;font-size:12.5px;color:var(--muted);font-weight:600}
+.topic{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:start;padding:5px 2px;cursor:pointer;border-radius:6px}
+.topic:hover{background:var(--bg)}
+.topic input{margin:3px 0 0;accent-color:var(--accent)}
+.topic .fr{font-weight:500;font-size:14px}
+.topic .vn{display:block;color:var(--muted);font-size:12.5px}
+.topic .cnt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.range{display:flex;align-items:center;gap:12px}
+.range input[type=range]{flex:1;accent-color:var(--accent)}
+.range output{min-width:34px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:18px}
+.avail{font-size:12.5px;color:var(--muted)}
+.avail.low{color:var(--warn)}
+.radio,.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}
+.radio input,.check input{margin-top:3px;accent-color:var(--accent)}
+.radio small{display:block;color:var(--muted);font-size:12.5px}
+.primary{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:11px 14px;font-weight:600;cursor:pointer;font-size:15px}
+.primary:disabled{opacity:.55;cursor:default}
+.ghost{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:500;font-size:14px}
+.ghost:disabled{opacity:.5;cursor:default}
+
+/* Preview */
+.preview{display:flex;flex-direction:column;gap:12px;min-width:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.tab{border:0;background:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.reader{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:2px}
+.reader button{border:0;background:none;border-radius:6px;padding:5px 9px;cursor:pointer;font-weight:600;font-size:14px;color:var(--ink)}
+.reader button:hover{background:var(--bg)}
+.reader button:disabled{opacity:.4;cursor:default}
+.reader output{min-width:30px;text-align:center;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.reader select{border:0;border-left:1px solid var(--line);background:none;padding:5px 6px 5px 10px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.status{font-size:13.5px;color:var(--muted);min-height:20px}
+.status.err{color:var(--red)}
+.status.ok{color:var(--ok)}
+.stage{overflow-x:auto}
+.result{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:center}
+.result .big{font-size:40px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.result .big small{font-size:18px;color:var(--muted);font-weight:500}
+.result .sub{color:var(--muted);font-size:14px}
+.meter{height:8px;border-radius:99px;background:var(--bg);overflow:hidden;grid-column:1/-1}
+.meter i{display:block;height:100%;background:var(--accent)}
+.weak{grid-column:1/-1;font-size:14px}
+.weak ul{margin:4px 0 0;padding-left:18px}
+.hidden{display:none !important}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+.b2th{display:flex;flex-direction:column;gap:6px;margin-top:6px;flex-basis:100%}
+</style>
+<style id="paper-css">/* Exam paper. Type scale (relative to the reader's base size --pfs):
+   H1 đề / tiêu đề 1.4em · H2 phần (PARTIE) 1.1em · H3 bài (Exercice, tên văn bản) 1em đậm
+   Nội dung câu hỏi, lựa chọn, văn bản 1em · Chú thích 0.9em · Siêu dữ liệu (điểm, số trang) 0.82em */
+.paper{--pfs:16px;--pff:"Times New Roman",Tinos,Times,serif;--fs-h1:1.4em;--fs-h2:1.1em;--fs-h3:1em;--fs-note:.9em;--fs-meta:.82em;
+  background:#fff;color:#111827;font-family:var(--pff);font-size:var(--pfs);line-height:1.6;max-width:794px;margin:0 auto;padding:44px 56px 52px;border-radius:4px;box-shadow:0 1px 2px rgba(20,30,60,.08),0 8px 28px rgba(20,30,60,.08)}
+.paper.print{--pfs:13pt;--pff:"Times New Roman",Tinos,Times,serif;line-height:1.5;box-shadow:none;border-radius:0;max-width:none;width:794px;padding:28px 44px 36px}
+.paper.sans{--pff:"Be Vietnam Pro",system-ui,sans-serif}
+.paper p{margin:0}
+.paper u{text-decoration-thickness:1px;text-underline-offset:3px}
+.page-break{page-break-before:always;break-before:page;height:0}
+
+/* ---- H1: practice header ---- */
+.ph{border-bottom:1.5px solid #111827;padding-bottom:12px;margin-bottom:20px}
+.ph-top{display:flex;justify-content:space-between;font-size:var(--fs-meta);letter-spacing:.06em;text-transform:uppercase;color:#4b5563}
+.ph-lv{font-weight:700}
+.ph h2{font-size:var(--fs-h1);margin:4px 0 10px;font-weight:700;line-height:1.2}
+.ph-fields{display:flex;flex-wrap:wrap;gap:6px 28px}
+.ph-fields i{display:inline-block;width:150px;border-bottom:1px dotted #6b7280;height:1em;vertical-align:baseline}
+.ph-fields i.short{width:40px}
+
+/* ---- H1: exam headers (tuyển sinh, DELF) ---- */
+.vnhead{display:grid;grid-template-columns:1fr 1.35fr;gap:16px;text-align:center;line-height:1.4;margin-bottom:12px}
+.vnhead>div{display:flex;flex-direction:column;align-items:center}
+.vnhead b{font-weight:700;text-transform:uppercase}
+.vnhead>div:last-child b{font-size:var(--fs-h2)}
+.vnhead span{font-weight:700}
+.vnhead i{font-style:italic;font-size:var(--fs-note)}
+.vnhead>div:first-child span{text-decoration:underline;text-underline-offset:3px}
+.cand{display:grid;grid-template-columns:1.6fr 1fr;gap:4px 24px;margin:8px 0 14px}
+.cand i{display:inline-block;width:60%;border-bottom:1px dotted #6b7280;height:1em;vertical-align:baseline}
+.cand i.sh{width:45%}
+.delfnote{font-size:12px;font-style:italic;color:#4b5563;border-left:3px solid #d1d5db;padding:2px 0 2px 10px;margin:0 0 14px}
+.delfnote a{color:inherit}
+.passage .src{font-size:11.5px;font-style:italic;color:#6b7280;margin-top:10px;border-top:1px solid #e5e7eb;padding-top:6px}
+.passage .src a{color:inherit}
+.vtitle{text-align:center;font-weight:700;font-size:var(--fs-h2);margin:0 0 12px}
+.form-concours .ph,.form-delf .ph{display:none}
+
+/* ---- H2: sections / parts ---- */
+.sec{margin:0 0 22px}
+.sec h3{font-size:var(--fs-h2);font-weight:700;margin:0 0 6px;line-height:1.3}
+.vpart{text-transform:uppercase;margin:22px 0 8px !important;padding-bottom:3px;border-bottom:1px solid #111827}
+.form-concours .sec,.form-delf .sec{margin-bottom:16px}
+.pts{font-weight:400;font-size:var(--fs-meta);color:#4b5563}
+
+/* ---- H3: exercises, document titles ---- */
+.vtask{margin:10px 0 10px}
+.vtask b{font-weight:700}
+.dex{margin-bottom:18px}
+.dexh{font-size:var(--fs-h3);font-weight:700;margin:14px 0 8px}
+.passage h4{font-size:var(--fs-h3);font-weight:700;text-align:center;margin:0 0 8px}
+
+/* ---- Body ---- */
+.consigne{font-style:italic;margin:0 0 12px !important;max-width:68ch}
+.qs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.q{display:grid;grid-template-columns:30px 1fr;gap:4px;page-break-inside:avoid;break-inside:avoid}
+.q .n{font-weight:700;font-variant-numeric:tabular-nums}
+.q p{max-width:68ch}
+.form-concours .q{grid-template-columns:auto 1fr;gap:6px}
+.form-concours .q .n{white-space:nowrap}
+.opts{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:2px 30px}
+.opts .l{font-weight:700}
+.delfopts{flex-direction:column;gap:2px !important}
+.cb{margin-right:6px}
+.qs.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 28px}
+.blank{display:inline-block;min-width:110px;border-bottom:1px solid #111827;height:1.05em;vertical-align:baseline;margin:0 2px}
+.blank.long{min-width:260px}
+.cols .blank{min-width:90px}
+.wline{border-bottom:1px solid #9ca3af;height:1.7em;margin-top:2px}
+.box{border:1px solid #111827;padding:8px 14px;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:4px 22px;font-weight:700;page-break-inside:avoid}
+.passage{max-width:calc(68ch + 40px);line-height:1.7;border:1px solid #d1d5db;padding:14px 18px;margin:0 0 14px;page-break-inside:avoid}
+.passage p{margin:0 0 8px}
+.passage p:last-child{margin-bottom:0}
+.cloze p{line-height:2.1}
+.gn{font-weight:700}
+.wfbase,.kw{font-weight:700}
+.ro{font-style:italic}
+.tfrow{display:flex;gap:22px;margin-top:4px;flex-wrap:wrap}
+.tfrow label{cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.wprompt{font-weight:700;margin:0 0 4px !important;max-width:68ch}
+.qline{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+
+/* ---- Notes (secondary) ---- */
+.ins{font-size:var(--fs-note);color:#374151;margin-top:3px !important;max-width:68ch}
+.hint{font-size:var(--fs-note);font-style:italic;color:#4b5563}
+.req{margin:2px 0 12px;padding-left:22px;font-size:var(--fs-note)}
+.theme{font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:.62em;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#8a5a00;background:#fbf1dc;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:.2em;white-space:nowrap}
+
+/* ---- Answer key ---- */
+.key .a{color:#b91c1c;font-weight:700}
+.key .ex{display:block;font-size:var(--fs-note);color:#374151;margin-top:2px}
+.key .orig{color:#4b5563}
+
+/* ---- Footers ---- */
+.foot{margin-top:26px;font-size:var(--fs-meta);color:#6b7280;text-align:right}
+.vnend{text-align:center;font-weight:700;margin-top:24px}
+.vnnote{text-align:center;font-style:italic;font-size:var(--fs-note);margin:4px 0 0}
+
+/* ---- Online answering (interface elements in sans-serif) ---- */
+.paper input.fill{font-family:inherit;font-size:inherit;border:0;border-bottom:1.5px solid #2a49c0;background:#f3f5fd;padding:1px 6px;min-width:120px;color:#111827;border-radius:3px 3px 0 0}
+.paper input.fill.wide{width:100%;margin-top:6px}
+.paper input.fill.sm{min-width:0;width:140px}
+.paper input.fill.ok{border-color:#1f7a4a;background:#eef8f2}
+.paper input.fill.bad{border-color:#c42f28;background:#fdf1f0}
+.paper input.fill.near{border-color:#a86a00;background:#fdf6e8}
+.paper .opts label{cursor:pointer;display:inline-flex;gap:6px;align-items:center;padding:2px 4px;border-radius:4px}
+.paper .opts input{accent-color:#2a49c0}
+.q.ok .n{color:#1f7a4a}
+.q.bad .n,.q.near .n{color:#c42f28}
+.q.self .n{color:#a86a00}
+.fb{grid-column:2;font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:13.5px;line-height:1.5;margin-top:6px;padding:7px 10px;border-radius:6px;background:#f6f7fb;border-left:3px solid #9aa0b6}
+.q.ok .fb{border-color:#1f7a4a;background:#eef8f2}
+.q.bad .fb{border-color:#c42f28;background:#fdf1f0}
+.q.near .fb,.q.self .fb{border-color:#a86a00;background:#fdf6e8}
+.fb b{font-weight:600}
+.fbslot .fb{margin:0}
+.fbslot .fb.okb{border-color:#1f7a4a;background:#eef8f2}
+.selfok{margin-left:6px;font:inherit;font-size:12.5px;font-weight:600;border:1px solid #1f7a4a;color:#1f7a4a;background:#fff;border-radius:5px;padding:1px 9px;cursor:pointer}
+.submitrow{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px}
+.submitrow button{font:inherit;font-weight:600;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid #2a49c0}
+.submitrow .go{background:#2a49c0;color:#fff}
+.submitrow .again{background:#fff;color:#2a49c0}
+.wtext{width:100%;max-width:calc(68ch + 26px);min-height:220px;font-family:inherit;font-size:inherit;line-height:1.6;border:1px solid #c9cede;border-radius:6px;padding:10px 12px;background:#fbfcff;color:#111827;resize:vertical}
+.wbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:13.5px;flex-wrap:wrap;color:#4a5170}
+.wcount.low,.wcount.high{color:#a86a00}
+.wbtns{display:flex;gap:8px}
+.wbtn{font:inherit;font-weight:600;border-radius:7px;padding:7px 14px;cursor:pointer;border:1px solid #2a49c0;background:#fff;color:#2a49c0}
+.wbtn.go{background:#2a49c0;color:#fff}
+.wbtn:disabled{opacity:.55;cursor:default}
+.wfb{white-space:pre-wrap;font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.6;margin-top:12px;padding:12px 14px;border-radius:6px;background:#f3f5fd;border-left:3px solid #2a49c0;color:#111827}
+.timerbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 12px;margin:-10px 0 18px;border:1px solid #c9cede;border-radius:8px;background:#f6f7fb;font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:13.5px}
+.timerbar b{font-size:17px;font-variant-numeric:tabular-nums}
+.timerbar b.warn{color:#c42f28}
+.timerbar button{font:inherit;font-weight:600;border:1px solid #2a49c0;background:#2a49c0;color:#fff;border-radius:7px;padding:5px 12px;cursor:pointer}
+.timerbar .sub2{color:#5a6383;font-size:12.5px}
+.examline{grid-column:1/-1;font-size:14px}
+.examline .bad{color:#c42f28;font-weight:600}
+@media (max-width:600px){.paper{padding:26px 18px 30px}.q{grid-template-columns:26px 1fr}.qs.cols{grid-template-columns:1fr}.blank.long{min-width:160px}.vnhead,.cand{grid-template-columns:1fr}}
+/* DELF oral block */
+.ogrid{width:100%;border-collapse:collapse;margin-top:.6em}
+.ogrid th{width:30%;text-align:left;vertical-align:top;font-weight:700;padding:.4em .6em .4em 0;border-top:1px solid #d1d5db}
+.ogrid th small{display:block;font-weight:400;font-style:italic;font-size:var(--fs-note);color:#4b5563}
+.ogrid td{border-top:1px solid #d1d5db;padding:.2em 0}
+.okey h4{font-size:var(--fs-h3);margin:.9em 0 .25em}
+.okey p,.okey li{font-size:1em;line-height:1.5}
+.ocols{display:grid;grid-template-columns:1fr 1fr;gap:1.2em}
+.ocols ul,.okey ul,.oplan{margin:.2em 0;padding-left:1.3em}
+.olex{list-style:none;padding-left:0 !important}
+.olex li{margin:.2em 0}
+.olex .fa{font-size:var(--fs-note);color:#9a3412}
+@media (max-width:600px){.ocols{grid-template-columns:1fr}.ogrid th{width:40%}}
+.key .ex.en{color:#0f5f55}
+.ex.en b,.ennote b{font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:.72em;letter-spacing:.05em;background:#e0f2ef;color:#0f5f55;padding:0 4px;border-radius:3px;margin-right:4px}
+.ennote{display:block;margin-top:4px;color:#0f5f55}
+</style>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="appbar">
+  <a class="brand" href="#lab"><b>Le Labo de français</b><small>Grammaire progressive · A2 → B2 · DELF</small></a>
+  <nav class="nav" aria-label="Navigation">
+    <a href="#lab" data-g="home">Accueil</a>
+    <a href="#bibliotheque" data-g="learn">Apprendre</a>
+    <a href="#generateur" data-g="train">S'entraîner</a>
+    <a href="#thithu" data-g="exam">Examen</a>
+  </nav>
+  <span class="clock" id="studyClock" role="timer" aria-label="Tổng thời gian học"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>0:00:00</b></span>
+  <a class="donatelink" id="donateLink" href="#soutenir" hidden title="Ủng hộ Le Labo">♥ Soutenir</a>
+  <span class="sync local" id="syncChip">Lưu trên trình duyệt</span>
+  <nav class="subnav" id="subnav" aria-label="Sous-menu" hidden></nav>
+</header>
+<main>
+  <section class="view" id="view-lab" aria-label="Lab"><div id="labRoot"></div></section>
+  <section class="view" id="view-ecoute" aria-label="Écoute" hidden><div id="ecouteRoot"></div></section>
+  <section class="view" id="view-phonetique" aria-label="Phonétique" hidden><div id="phonRoot"></div></section>
+  <section class="view" id="view-parler" aria-label="Parler" hidden><div id="parlerRoot"></div></section>
+  <section class="view" id="view-soutenir" aria-label="Soutenir" hidden><div id="donateRoot"></div></section>
+  <section class="view" id="view-thithu" aria-label="Examen blanc" hidden><div id="thithuRoot"></div></section>
+  <section class="view" id="view-soloi" aria-label="Carnet d'erreurs" hidden><div id="soloiRoot"></div></section>
+  <section class="view" id="view-cartes" aria-label="Vocabulaire" hidden><div id="cartesRoot"></div></section>
+  <section class="view" id="view-mot" aria-label="Mot du jour" hidden><div id="motRoot"></div></section>
+  <section class="view" id="view-bibliotheque" aria-label="Grammaire" hidden><div id="libRoot"></div></section>
+  <section class="view" id="view-generateur" aria-label="Exercices" hidden>
+<header class="top">
+  <h1>Exercices et tests</h1>
+  <p>11 dạng bài, lồng ghép văn hoá, lịch sử, nghệ thuật Pháp. In kèm đáp án hoặc làm online có chấm điểm.</p>
+</header>
+
+<div class="wrap">
+  <aside class="builder" aria-label="Thiết lập đề">
+    <div class="field">
+      <label class="label" for="title">Tên đề</label>
+      <input id="title" class="text" type="text" value="Test de grammaire">
+    </div>
+
+    <div class="field">
+      <div class="label">Trình độ (CECRL)</div>
+      <div class="chips" id="levels"></div>
+    </div>
+
+    <div class="field" id="fTopics">
+      <div class="label">Chủ điểm
+        <span class="mini"><button class="linkbtn" id="allTopics" type="button">Chọn hết</button><button class="linkbtn" id="noTopics" type="button">Bỏ chọn</button></span>
+      </div>
+      <div class="topics" id="topics"></div>
+    </div>
+
+    <div class="field">
+      <div class="label">Kiểu đề</div>
+      <div class="seg3" id="formSeg" role="group" aria-label="Kiểu đề"></div>
+      <div class="formopts" id="formOpts"></div>
+      <div class="avail" id="formNote"></div>
+    </div>
+
+    <div class="field" id="fTypes">
+      <div class="label">Dạng câu hỏi</div>
+      <div id="types"></div>
+    </div>
+
+    <div class="field" id="fCult">
+      <div class="label">Văn hoá Pháp</div>
+      <div class="chips" id="themes"></div>
+      <div class="seg" role="radiogroup" aria-label="Mức lồng ghép văn hoá">
+        <span class="seglab">Mức lồng ghép:</span>
+        <label><input type="radio" name="cult" value="low">Ít</label>
+        <label><input type="radio" name="cult" value="mid" checked>Vừa</label>
+        <label><input type="radio" name="cult" value="high">Nhiều</label>
+      </div>
+      <div class="avail">Ưu tiên câu ngữ pháp, đoạn văn và bài đọc có bối cảnh lịch sử, nghệ thuật, đời sống Pháp.</div>
+    </div>
+
+    <div class="field" id="fCount">
+      <label class="label" for="count">Số câu lẻ</label>
+      <div class="range"><input id="count" type="range" min="5" max="40" step="1" value="20"><output id="countOut" for="count">20</output></div>
+      <div class="avail" id="avail"></div>
+    </div>
+
+    <div class="field">
+      <div class="label">Nguồn câu hỏi</div>
+      <label class="radio"><input type="radio" name="src" id="srcBank" value="bank" checked><span>Ngân hàng có sẵn<small>Tạo ngay, không tốn lượt Claude.</small></span></label>
+      <label class="radio" id="srcAiRow"><input type="radio" name="src" id="srcAi" value="ai"><span>Claude soạn câu mới<small id="aiNote">Mỗi lần ra đề mới hoàn toàn, dùng lượt Claude của bạn. Đang kiểm tra…</small></span></label>
+    </div>
+
+    <div class="field">
+      <div class="label">Đáp án</div>
+      <label class="check"><input type="checkbox" id="withKey" checked>Kèm trang đáp án khi tải PDF</label>
+      <label class="check"><input type="checkbox" id="withEx" checked>Kèm giải thích tiếng Việt</label>
+      <label class="check"><input type="checkbox" id="withEn">Kèm so sánh tiếng Anh</label>
+    </div>
+
+    <button class="primary" id="build" type="button">Tạo đề</button>
+  </aside>
+
+  <main class="preview">
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Chế độ xem">
+        <button class="tab" role="tab" id="tab-test" aria-selected="true" type="button">Đề in</button>
+        <button class="tab" role="tab" id="tab-key" aria-selected="false" type="button">Đáp án</button>
+        <button class="tab" role="tab" id="tab-online" aria-selected="false" type="button">Làm online</button>
+      </div>
+      <div class="actions">
+        <div class="reader" role="group" aria-label="Cỡ chữ và kiểu chữ của đề">
+          <button type="button" id="fsDown" aria-label="Giảm cỡ chữ">A−</button>
+          <output id="fsVal" aria-live="polite">16</output>
+          <button type="button" id="fsUp" aria-label="Tăng cỡ chữ">A+</button>
+          <select id="pfont" aria-label="Kiểu chữ"><option value="serif">Times New Roman</option><option value="sans">Không chân</option></select>
+        </div>
+        <button class="ghost" id="reshuffle" type="button">Đổi câu khác</button>
+        <button class="ghost dl" id="dlPdf" type="button">Tải PDF</button>
+        <button class="ghost dl" id="dlHtml" type="button">Tải HTML</button>
+      </div>
+    </div>
+    <div class="minilib" id="miniLib" aria-label="Ma bibliothèque"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div class="result hidden" id="result"></div>
+    <div class="stage"><div class="paper" id="paper"></div></div>
+  </main>
+</div>
+
+
+  </section>
+</main>
+<div class="modal" id="modal" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="js/env.js"></script>
+<script src="js/speech.js"></script>
+<script src="data/bank.js"></script>
+<script src="data/extra.js"></script>
+<script src="data/culture.js"></script>
+<script src="data/newtopics.js"></script>
+<script src="data/exams.js"></script>
+<script src="data/roadmap.js"></script>
+<script src="data/lessons_i.js"></script>
+<script src="data/lessons_a.js"></script>
+<script src="data/en_i.js"></script>
+<script src="data/en_a.js"></script>
+<script src="data/b2grammar.js"></script>
+<script src="data/b2themes.js"></script>
+<script src="data/a2sets.js"></script>
+<script src="data/opensets.js"></script>
+<script src="data/en_items.js"></script>
+<script src="js/store.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/soloi.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/library.js"></script>
+<script src="data/mots.js"></script>
+<script src="data/mots2.js"></script>
+<script src="data/mots_ipa.js"></script>
+<script src="js/mot.js"></script>
+<script src="data/cartes.js"></script>
+<script src="data/cartes_vp1.js"></script>
+<script src="data/cartes_vp2.js"></script>
+<script src="data/cartes_vp3.js"></script>
+<script src="data/cartes_vp4.js"></script>
+<script src="js/cartes.js"></script>
+<script src="js/video.js"></script>
+<script src="data/ecoute.js"></script>
+<script src="js/ecoute.js"></script>
+<script src="data/phon.js"></script>
+<script src="js/phon.js"></script>
+<script src="data/parler.js"></script>
+<script src="js/parler.js"></script>
+<script src="js/thithu.js"></script>
+<script src="data/donate.js"></script>
+<script src="js/donate.js"></script>
+<script src="js/lab.js"></script>
+</body>
+</html>
